@@ -1,4 +1,5 @@
 export interface TestMethod {
+    id?: number;
     method: string;
     parameters: string[];
     sampleType: string;

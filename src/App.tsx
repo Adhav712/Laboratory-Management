@@ -17,10 +17,16 @@ const App = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState<Lab>(emptyLab); // Specify type for editData
   const [currentTestMethod, setCurrentTestMethod] = useState<TestMethod>(); // Specify type for currentTestMethod
-
+  const [tempTestMethodData, setTempTestMethodData] = useState<TestMethod[]>([]); // Specify type for tempTestMethodData
   const labs = useSelector((state: RootState) => state.labs); // Specify type for state
 
-  console.log(labs);
+  console.log("labs", labs);
+  console.log("editData", editData);
+  console.log("isEdit", isEdit);
+  console.log("currentTestMethod", currentTestMethod);
+  console.log("tempTestMethodData", tempTestMethodData);
+
+
 
   const handleRowClick = (data: Lab) => { // Specify type for data
     setEditData(data);
@@ -79,6 +85,7 @@ const App = () => {
             setCurrentTestMethod={setCurrentTestMethod}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
+            tempTestMethodData={tempTestMethodData}
           />
         </Modal>
         <Modal
@@ -95,6 +102,8 @@ const App = () => {
             setIsTestMethodModalOpen={setIsTestMethodModalOpen}
             currentTestMethod={currentTestMethod || emptyTestMethod}
             isEdit={isEdit}
+            setTempTestMethodData={setTempTestMethodData}
+            tempTestMethodData={tempTestMethodData}
           />
         </Modal >
       </div >

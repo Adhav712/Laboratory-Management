@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button } from 'antd';
 import { useDispatch } from 'react-redux';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { initialTestMethods } from '../../store/initialData';
-import { addTestMethod, emptyTestMethod, updateTestMethod } from '../../store/labSlice';
+import { emptyTestMethod, updateTestMethod } from '../../store/labSlice';
 import { Lab, TestMethod } from '../../types/Lab';
 import ReusableForm from '../FormComponent';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,13 +15,17 @@ interface TestMethodModalProps {
     setIsTestMethodModalOpen: (state: boolean) => void;
     currentTestMethod: TestMethod | null;
     isEdit: boolean;
+    setTempTestMethodData: (state: TestMethod[]) => void;
+    tempTestMethodData: TestMethod[];
 }
 
 const TestMethodModal: React.FC<TestMethodModalProps> = ({
     editData,
     setIsTestMethodModalOpen,
     currentTestMethod,
-    isEdit
+    isEdit,
+    setTempTestMethodData,
+    tempTestMethodData
 }) => {
     const dispatch = useDispatch();
     const TestMethodSchemaObject = Object.fromEntries(
@@ -41,14 +45,16 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
     });
 
 
-    const handleSubmit = (data: TestMethod) => {
-        if ((editData?.id !== 0) && !isEdit) {
-            dispatch(addTestMethod({ labId: editData?.id, ...data }));
-        } else {
+    const handleSubmit = useCallback((data: TestMethod) => {
+        if ((editData?.id !== 0) && isEdit) {
             dispatch(updateTestMethod(data));
+        } else {
+            setTempTestMethodData(
+                [...tempTestMethodData, { ...data, id: tempTestMethodData.length + 1 }]
+            );
         }
         setIsTestMethodModalOpen(false);
-    };
+    }, [dispatch, editData, isEdit, setIsTestMethodModalOpen, tempTestMethodData, setTempTestMethodData]);
 
     useEffect(() => {
         if ((editData?.id !== 0) && currentTestMethod && isEdit) {

@@ -1,9 +1,9 @@
-import { Lab } from '../types/Lab';
+import { Lab, TestMethod } from '../types/Lab';
 import { deleteLab, updateLab } from '../store/labSlice';
 import { useDispatch } from 'react-redux';
 import { Select, Tag } from 'antd';
 import TableComponent from './TableComponent';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, ColGroupDef } from 'ag-grid-community';
 import { CustomCellEditorProps, CustomCellRendererProps } from 'ag-grid-react';
 
 interface MasterTableProps {
@@ -14,7 +14,7 @@ interface MasterTableProps {
 
 const MasterTable: React.FC<MasterTableProps> = ({ rowData, onRowClick, setIsEdit }) => {
     const dispatch = useDispatch();
-    const columns: ColDef[] = [
+    const columns: (ColDef | ColGroupDef)[] = [
         {
             headerName: 'ID', field: 'id', sortable: true,
             cellRenderer: (params: CustomCellRendererProps) => (
@@ -50,7 +50,6 @@ const MasterTable: React.FC<MasterTableProps> = ({ rowData, onRowClick, setIsEdi
             field: 'servicesOffered',
             sortable: true,
             filter: true,
-            flex: 1,
             cellRenderer: (params: CustomCellRendererProps) => (
                 params.value.map((service: string) => (
                     <Tag key={service} color='blue' className='mb-1'>{service}</Tag>
@@ -75,7 +74,8 @@ const MasterTable: React.FC<MasterTableProps> = ({ rowData, onRowClick, setIsEdi
                     style={{ width: '100%' }}
                 />
             ),
-            cellEditorPopup: true
+            cellEditorPopup: true,
+            width: 400
         },
         {
             headerName: 'Status',
@@ -86,6 +86,36 @@ const MasterTable: React.FC<MasterTableProps> = ({ rowData, onRowClick, setIsEdi
                 <Tag color={params.value === 'Active' ? 'green' : 'red'}>{params.value}</Tag>
             ),
             width: 100
+        },
+        // Test Methods - method, parameters, sampleType
+        {
+            headerName: 'Test Methods',
+            children: [
+                {
+                    headerName: 'Method',
+                    field: 'testMethods',
+                    valueGetter: (params) => params.data.testMethods.map((method: TestMethod) => method.method).join(', '),
+                    sortable: true,
+                    filter: true,
+                    flex: 1
+                },
+                {
+                    headerName: 'Parameters',
+                    field: 'testMethods',
+                    valueGetter: (params) => params.data.testMethods.map((method: TestMethod) => method.parameters.join(', ')).join(', '),
+                    sortable: true,
+                    filter: true,
+                    flex: 1
+                },
+                {
+                    headerName: 'Sample Type',
+                    field: 'testMethods',
+                    valueGetter: (params) => params.data.testMethods.map((method: TestMethod) => method.sampleType).join(', '),
+                    sortable: true,
+                    filter: true,
+                    flex: 1
+                },
+            ]
         },
         {
             headerName: 'Action',

@@ -19,6 +19,7 @@ interface MainCardProps {
     setCurrentTestMethod: (state: TestMethod) => void;
     isEdit: boolean;
     setIsEdit: (state: boolean) => void;
+    tempTestMethodData: TestMethod[];
 }
 
 const MainCard: React.FC<MainCardProps> = ({
@@ -27,7 +28,8 @@ const MainCard: React.FC<MainCardProps> = ({
     labs,
     setIsTestMethodModalOpen,
     setCurrentTestMethod,
-    isEdit
+    isEdit,
+    tempTestMethodData
 }) => {
     const dispatch = useDispatch();
     const MainFormSchemaObject = Object.fromEntries(
@@ -50,14 +52,14 @@ const MainCard: React.FC<MainCardProps> = ({
         if (isEdit && (editData?.id !== 0)) {
             dispatch(updateLab(data));
         } else {
-            dispatch(addLab({ ...data, id: labs.length + 1, testMethods: [] }));
+            dispatch(addLab({ ...data, id: labs.length + 1, testMethods: tempTestMethodData }));
         }
         setIsModalOpen(false);
 
         console.log(data);
 
     },
-        [dispatch, editData?.id, isEdit, labs.length, setIsModalOpen]
+        [dispatch, editData?.id, isEdit, labs.length, setIsModalOpen, tempTestMethodData]
     );
 
 
@@ -86,7 +88,7 @@ const MainCard: React.FC<MainCardProps> = ({
                                 <Button
                                     className=''
                                     onClick={handleSubmit}>
-                                    {editData ? 'Update' : 'Submit'}
+                                    {isEdit ? 'Update' : 'Submit'}
                                 </Button>
                             </div>
                         </>
@@ -113,7 +115,10 @@ const MainCard: React.FC<MainCardProps> = ({
                     <Suspense fallback={<div>Loading...</div>}>
                         <TableComponent
                             data={
-                                labs.find((lab) => lab.id === editData?.id)?.testMethods || []}
+                                isEdit ?
+                                    (labs.find((lab) => lab.id === editData?.id)?.testMethods || []) :
+                                    tempTestMethodData
+                            }
                             isLoading={false}
                             paginationPageSize={5}
                             paginationPageSizeSelector={
