@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import GridComponent from './components/GridComponent';
+import { lazy, Suspense, useCallback, useState } from 'react';
+// import GridComponent from './components/GridComponent';
 import { useSelector, useDispatch } from 'react-redux';
 import { addLab, addTestMethod, deleteTestMethod, updateLab, updateTestMethod } from './store/labSlice';
 import { Button, Modal } from 'antd';
@@ -7,13 +7,19 @@ import { Lab, TestMethod } from './types/Lab';
 import { RootState } from './store';
 import { z } from 'zod';
 import { parameters } from './utils/faker';
-import ReusableForm, { CustomField } from './components/FormComponent';
+// import ReusableForm, { CustomField } from './components/FormComponent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
-import Navbar from './components/Navbar';
-import TableComponent from './components/TableComponent';
+// import Navbar from './components/Navbar';
+// import TableComponent from './components/TableComponent';
 import { CustomCellRendererProps } from 'ag-grid-react';
+import { CustomField } from './components/FormComponent';
 
+// Lazy load components
+const Navbar = lazy(() => import('./components/Navbar'));
+const GridComponent = lazy(() => import('./components/GridComponent'));
+const ReusableForm = lazy(() => import('./components/FormComponent'));
+const TableComponent = lazy(() => import('./components/TableComponent'));
 const initialFormHeaders: CustomField[] = [
   {
     name: 'labName',
@@ -229,26 +235,28 @@ const App = () => {
   const MainCard = useCallback(() => {
     return (
       <>
-        <ReusableForm
-          fields={initialFormHeaders}
-          onSubmit={(data) => {
-            console.log(data);
-            handleSubmit(data as Lab);
-          }}
-          formMethods={TestMethodFormMethods as unknown as UseFormReturn<FieldValues>}
-          buttonComponent={(handleSubmit) => (
-            <>
-              <div className="w-full flex justify-end mb-2">
-                <Button
-                  className=''
-                  onClick={handleSubmit}>
-                  {editData ? 'Update' : 'Submit'}
-                </Button>
-              </div>
-            </>
-          )}
-          gridLayout='3x3'
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ReusableForm
+            fields={initialFormHeaders}
+            onSubmit={(data) => {
+              console.log(data);
+              handleSubmit(data as Lab);
+            }}
+            formMethods={TestMethodFormMethods as unknown as UseFormReturn<FieldValues>}
+            buttonComponent={(handleSubmit) => (
+              <>
+                <div className="w-full flex justify-end mb-2">
+                  <Button
+                    className=''
+                    onClick={handleSubmit}>
+                    {editData ? 'Update' : 'Submit'}
+                  </Button>
+                </div>
+              </>
+            )}
+            gridLayout='3x3'
+          />
+        </Suspense>
         <div className='flex justify-between'>
           <p className='text-xl font-semibold'>Test Method</p>
           <Button onClick={() => {
@@ -260,69 +268,71 @@ const App = () => {
         </div>
         <div>
           <div>
-            <TableComponent
-              data={
-                labs.find((lab) => lab.id === editData?.id)?.testMethods || []}
-              isLoading={false}
-              columns={[
-                {
-                  headerName: 'Method',
-                  field: 'method',
-                  sortable: true,
-                  filter: true,
-                  flex: 1,
-                },
-                {
-                  headerName: 'Parameters',
-                  field: 'parameters',
-                  sortable: true,
-                  filter: true,
-                  flex: 1,
-                },
-                {
-                  headerName: 'Sample Type',
-                  field: 'sampleType',
-                  sortable: true,
-                  filter: true,
-                  flex: 1,
-                },
-                {
-                  headerName: 'Action',
-                  field: 'Action',
-                  cellRenderer: (params: CustomCellRendererProps) => {
-                    return (
-                      <div className="flex gap-4">
-                        <button
-                          className="text-blue-600 hover:text-blue-800"
-                          onClick={() => {
-                            setIsTestMethodModalOpen(true);
-                            setCurrentTestMethod(params.data);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="text-red-600 hover:text-red-800"
-                          onClick={() => {
-                            if (window.confirm('Are you sure you want to delete this item?')) {
-                              dispatch(deleteTestMethod(
-                                {
-                                  labId: editData?.id || 0,
-                                  method: params.data.method
-                                }
-                              ));
-                            }
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )
+            <Suspense fallback={<div>Loading...</div>}>
+              <TableComponent
+                data={
+                  labs.find((lab) => lab.id === editData?.id)?.testMethods || []}
+                isLoading={false}
+                columns={[
+                  {
+                    headerName: 'Method',
+                    field: 'method',
+                    sortable: true,
+                    filter: true,
+                    flex: 1,
                   },
-                  flex: 1,
-                }
-              ]}
-            />
+                  {
+                    headerName: 'Parameters',
+                    field: 'parameters',
+                    sortable: true,
+                    filter: true,
+                    flex: 1,
+                  },
+                  {
+                    headerName: 'Sample Type',
+                    field: 'sampleType',
+                    sortable: true,
+                    filter: true,
+                    flex: 1,
+                  },
+                  {
+                    headerName: 'Action',
+                    field: 'Action',
+                    cellRenderer: (params: CustomCellRendererProps) => {
+                      return (
+                        <div className="flex gap-4">
+                          <button
+                            className="text-blue-600 hover:text-blue-800"
+                            onClick={() => {
+                              setIsTestMethodModalOpen(true);
+                              setCurrentTestMethod(params.data);
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="text-red-600 hover:text-red-800"
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to delete this item?')) {
+                                dispatch(deleteTestMethod(
+                                  {
+                                    labId: editData?.id || 0,
+                                    method: params.data.method
+                                  }
+                                ));
+                              }
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )
+                    },
+                    flex: 1,
+                  }
+                ]}
+              />
+            </Suspense>
           </div>
         </div>
       </>
@@ -331,7 +341,9 @@ const App = () => {
 
   return (
     <>
-      <Navbar />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Navbar />
+      </Suspense>
       <div className="container mx-auto p-4">
         <Button
           type="primary"
@@ -343,7 +355,9 @@ const App = () => {
           Add Lab
         </Button>
         <div>
-          <GridComponent rowData={labs || []} onRowClick={handleRowClick} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <GridComponent rowData={labs || []} onRowClick={handleRowClick} />
+          </Suspense>
         </div>
 
         <Modal
