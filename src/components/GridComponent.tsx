@@ -2,35 +2,14 @@
 
 
 import { Lab } from '../types/Lab';
-import { deleteLab } from '../store/labSlice';
+import { deleteLab, updateLab } from '../store/labSlice';
 import { useDispatch } from 'react-redux';
-import { Tag } from 'antd';
+import { Select, Tag } from 'antd';
 import TableComponent from './TableComponent';
 import {
     ColDef
 } from 'ag-grid-community';
-import { CustomCellRendererProps } from 'ag-grid-react';
-// ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
-// const myTheme = themeQuartz
-//     .withPart(iconSetQuartzLight)
-//     .withParams({
-//         backgroundColor: "#ffffff",
-//         browserColorScheme: "light",
-//         columnBorder: false,
-//         fontFamily: "Arial",
-//         foregroundColor: "rgb(46, 55, 66)",
-//         headerBackgroundColor: "#F9FAFB",
-//         headerFontSize: 14,
-//         headerFontWeight: 600,
-//         headerTextColor: "#919191",
-//         oddRowBackgroundColor: "#F9FAFB",
-//         rowBorder: false,
-//         sidePanelBorder: false,
-//         spacing: 8,
-//         wrapperBorder: false,
-//         wrapperBorderRadius: 0
-//     });
+import { CustomCellEditorProps, CustomCellRendererProps } from 'ag-grid-react';
 
 interface GridComponentProps {
     rowData: Lab[];
@@ -50,16 +29,10 @@ const GridComponent: React.FC<GridComponentProps> = ({ rowData, onRowClick }) =>
             },
             width: 80
         },
-        { headerName: 'Lab Name', field: 'labName', sortable: true, filter: true },
+        {
+            headerName: 'Lab Name', field: 'labName', sortable: true, filter: true,
+        },
         { headerName: 'Location', field: 'location', sortable: true, filter: true },
-        // "contactPerson": "Dr. Ramesh",
-        // "contactNumber": "9876543210",
-        // "servicesOffered": [
-        //     "Chemical Analysis",
-        //     "Oil Testing",
-        //     "Water Quality"
-        // ],
-        // "status": "Active",
         {
             headerName: 'Contact Person',
             field: 'contactPerson',
@@ -88,7 +61,34 @@ const GridComponent: React.FC<GridComponentProps> = ({ rowData, onRowClick }) =>
                         >{service}</Tag>
                     ))
                 )
-            }
+            },
+            editable: true,
+            cellEditor: (params: CustomCellEditorProps) => {
+                return (
+                    <Select
+                        mode='multiple'
+                        placeholder='Select Services'
+                        value={params.value ? params.value : []}
+                        onChange={(value) => {
+                            dispatch(updateLab({ ...params.data, servicesOffered: value }));
+                            params.stopEditing()
+                        }}
+                        onBlur={() => {
+                            params.stopEditing()
+                        }}
+                        options={
+                            ['Chemical Analysis', 'Oil Testing', 'Water Quality', "Material Testing",
+                                "Environmental Testing"].map((service) => ({
+                                    label: service,
+                                    value: service
+                                }))
+                        }
+                        allowClear
+                        style={{ width: '100%' }}
+                    />
+                )
+            },
+            cellEditorPopup: true
         },
         {
             headerName: 'Status',
@@ -138,21 +138,6 @@ const GridComponent: React.FC<GridComponentProps> = ({ rowData, onRowClick }) =>
     ];
 
     return (
-        // <div className="ag-theme-alpine 
-        // bg-white border border-gray-200 rounded-md shadow-md 
-        // " style={{ height: 490, width: '100%' }}>
-        //     <AgGridReact
-        //         theme={myTheme}
-        //         rowData={rowData}
-        //         columnDefs={columns}
-        //         defaultColDef={{
-        //             resizable: true,
-        //             filter: true,
-        //         }}
-        //         pagination={true}
-
-        //     />
-        // </div>
         <TableComponent
             columns={columns}
             data={rowData}

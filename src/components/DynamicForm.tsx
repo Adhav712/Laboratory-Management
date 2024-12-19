@@ -19,7 +19,8 @@ export interface FieldSchema<T> {
         data: T,
         field: ControllerRenderProps<Lab, keyof Lab>,
         fieldState: ControllerFieldState,
-        control: Control<Lab, unknown>
+        control: Control<Lab, unknown>,
+        index: number
     ) => JSX.Element;
 }
 
@@ -52,8 +53,8 @@ const DynamicForm = <T,>({ initialValues = {} as Lab, onSubmit, fields }: Dynami
     });
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 p-6">
-            {fields.map((DynamicFields) => (
+        <form onSubmit={handleSubmit(onSubmit)} className=" p-6">
+            {fields.map((DynamicFields, index) => (
                 <div key={DynamicFields.name} className="flex flex-col">
                     <label className="mb-2 text-sm font-medium text-gray-700">{DynamicFields.label}</label>
                     <Controller
@@ -92,7 +93,8 @@ const DynamicForm = <T,>({ initialValues = {} as Lab, onSubmit, fields }: Dynami
                                                 initialValues as T,
                                                 field,
                                                 fieldState,
-                                                control
+                                                control,
+                                                index
                                             )}
                                         </>
 
