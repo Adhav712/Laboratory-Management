@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'antd';
 import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
+import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { initialTestMethods } from '../../store/initialData';
-import { addTestMethod, updateTestMethod } from '../../store/labSlice';
+import { addTestMethod, emptyTestMethod, updateTestMethod } from '../../store/labSlice';
 import { Lab, TestMethod } from '../../types/Lab';
 import ReusableForm from '../FormComponent';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,11 +13,13 @@ import { z } from 'zod';
 interface TestMethodModalProps {
     editData: Lab | null;
     setIsTestMethodModalOpen: (state: boolean) => void;
+    currentTestMethod: TestMethod | null;
 }
 
 const TestMethodModal: React.FC<TestMethodModalProps> = ({
     editData,
     setIsTestMethodModalOpen,
+    currentTestMethod
 }) => {
     const dispatch = useDispatch();
     const TestMethodSchemaObject = Object.fromEntries(
@@ -33,6 +35,7 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
     const schema = z.object(TestMethodSchemaObject).required();
     const TestMethodFormMethods = useForm({
         resolver: zodResolver(schema),
+        defaultValues: currentTestMethod ?? emptyTestMethod
     });
 
 
@@ -45,11 +48,16 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
         setIsTestMethodModalOpen(false);
     };
 
+    useEffect(() => {
+        if (editData && currentTestMethod) {
+            TestMethodFormMethods.reset(currentTestMethod);
+        }
+    }, [TestMethodFormMethods, currentTestMethod, editData]);
     return (
         <ReusableForm
             fields={initialTestMethods}
             onSubmit={(data) => handleSubmit(data as TestMethod)}
-            formMethods={TestMethodFormMethods}
+            formMethods={TestMethodFormMethods as unknown as UseFormReturn<FieldValues>}
             buttonComponent={(handleSubmit) => (
                 <Button htmlType="submit" onClick={handleSubmit}>
                     Submit

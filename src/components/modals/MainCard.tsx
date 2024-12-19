@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback } from 'react';
+import React, { Suspense, useCallback, useEffect } from 'react';
 import { Button } from 'antd';
 import { useDispatch } from 'react-redux';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
@@ -39,8 +39,7 @@ const MainCard: React.FC<MainCardProps> = ({
     const schema = z.object(MainFormSchemaObject).required();
 
     const MainFormMethods = useForm({
-        resolver: zodResolver(schema),
-        defaultValues: editData ?? {}
+        resolver: zodResolver(schema)
     });
     const handleSubmit = useCallback((data: Lab) => {
         console.log(data);
@@ -58,6 +57,12 @@ const MainCard: React.FC<MainCardProps> = ({
         [dispatch, editData, labs.length, setIsModalOpen]
     );
 
+
+    useEffect(() => {
+        if (editData) {
+            MainFormMethods.reset(editData);
+        }
+    }, [editData, MainFormMethods]);
 
     return (
         <>

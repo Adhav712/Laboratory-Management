@@ -5,6 +5,7 @@ import { Lab, TestMethod } from './types/Lab';
 import { RootState } from './store';
 import MainCard from './components/modals/MainCard';
 import TestMethodModal from './components/modals/TestMethodModal';
+import { emptyLab, emptyTestMethod } from './store/labSlice';
 
 // Lazy load components
 const Navbar = lazy(() => import('./components/Navbar'));
@@ -13,8 +14,8 @@ const GridComponent = lazy(() => import('./components/GridComponent'));
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTestMethodModalOpen, setIsTestMethodModalOpen] = useState(false);
-  const [editData, setEditData] = useState<Lab | null>(null); // Specify type for editData
-  const [currentTestMethod, setCurrentTestMethod] = useState<TestMethod | null>(null); // Specify type for currentTestMethod
+  const [editData, setEditData] = useState<Lab>(emptyLab); // Specify type for editData
+  const [currentTestMethod, setCurrentTestMethod] = useState<TestMethod>(); // Specify type for currentTestMethod
 
   const labs = useSelector((state: RootState) => state.labs); // Specify type for state
 
@@ -36,7 +37,7 @@ const App = () => {
           className='m-2'
           onClick={() => {
             setIsModalOpen(true);
-            setEditData(null);
+            setEditData(emptyLab);
           }}>
           Add Lab
         </Button>
@@ -50,7 +51,7 @@ const App = () => {
           open={isModalOpen}
           onCancel={() => {
             setIsModalOpen(false);
-            setEditData(null);
+            setEditData(emptyLab);
           }}
           title={editData ? 'Edit Lab' : 'Add Lab'}
           footer={null}
@@ -60,12 +61,12 @@ const App = () => {
           onClose={
             () => {
               setIsModalOpen(false);
-              setEditData(null);
+              setEditData(emptyLab);
             }
           }
         >
           <MainCard
-            editData={editData}
+            editData={editData || emptyLab}
             setIsModalOpen={setIsModalOpen}
             labs={labs}
             setIsTestMethodModalOpen={setIsTestMethodModalOpen}
@@ -82,8 +83,9 @@ const App = () => {
           className='w-full md:w-1/2'
         >
           <TestMethodModal
-            editData={editData}
+            editData={editData || emptyLab}
             setIsTestMethodModalOpen={setIsTestMethodModalOpen}
+            currentTestMethod={currentTestMethod || emptyTestMethod}
           />
         </Modal >
       </div >

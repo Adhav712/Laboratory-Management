@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Lab } from '../types/Lab';
+import { Lab, TestMethod } from '../types/Lab';
 import { generateFakeLabs } from '../utils/faker';
 
 export const emptyLab: Lab = {
@@ -17,6 +17,12 @@ export const emptyLab: Lab = {
             sampleType: ''
         }
     ]
+};
+
+export const emptyTestMethod: TestMethod = {
+    method: '',
+    parameters: [],
+    sampleType: ''
 };
 
 const labSlice = createSlice({
