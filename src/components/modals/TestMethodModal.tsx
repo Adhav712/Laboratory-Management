@@ -14,12 +14,14 @@ interface TestMethodModalProps {
     editData: Lab | null;
     setIsTestMethodModalOpen: (state: boolean) => void;
     currentTestMethod: TestMethod | null;
+    isEdit: boolean;
 }
 
 const TestMethodModal: React.FC<TestMethodModalProps> = ({
     editData,
     setIsTestMethodModalOpen,
-    currentTestMethod
+    currentTestMethod,
+    isEdit
 }) => {
     const dispatch = useDispatch();
     const TestMethodSchemaObject = Object.fromEntries(
@@ -40,8 +42,8 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
 
 
     const handleSubmit = (data: TestMethod) => {
-        if (editData) {
-            dispatch(addTestMethod({ labId: editData.id, ...data }));
+        if ((editData?.id !== 0) && !isEdit) {
+            dispatch(addTestMethod({ labId: editData?.id, ...data }));
         } else {
             dispatch(updateTestMethod(data));
         }
@@ -49,10 +51,12 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
     };
 
     useEffect(() => {
-        if (editData && currentTestMethod) {
+        if ((editData?.id !== 0) && currentTestMethod && isEdit) {
             TestMethodFormMethods.reset(currentTestMethod);
+        } else {
+            TestMethodFormMethods.reset(emptyTestMethod);
         }
-    }, [TestMethodFormMethods, currentTestMethod, editData]);
+    }, [TestMethodFormMethods, currentTestMethod, editData, isEdit]);
     return (
         <ReusableForm
             fields={initialTestMethods}

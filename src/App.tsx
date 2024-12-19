@@ -14,6 +14,7 @@ const MasterTable = lazy(() => import('./components/MasterTable'));
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTestMethodModalOpen, setIsTestMethodModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState<Lab>(emptyLab); // Specify type for editData
   const [currentTestMethod, setCurrentTestMethod] = useState<TestMethod>(); // Specify type for currentTestMethod
 
@@ -38,12 +39,15 @@ const App = () => {
           onClick={() => {
             setIsModalOpen(true);
             setEditData(emptyLab);
+            setIsEdit(false);
           }}>
           Add Lab
         </Button>
         <div>
           <Suspense fallback={<div>Loading...</div>}>
-            <MasterTable rowData={labs || []} onRowClick={handleRowClick} />
+            <MasterTable rowData={labs || []} onRowClick={handleRowClick}
+              setIsEdit={setIsEdit}
+            />
           </Suspense>
         </div>
 
@@ -52,8 +56,9 @@ const App = () => {
           onCancel={() => {
             setIsModalOpen(false);
             setEditData(emptyLab);
+            setIsEdit(false);
           }}
-          title={editData ? 'Edit Lab' : 'Add Lab'}
+          title={isEdit ? 'Edit Lab' : 'Add Lab'}
           footer={null}
           width={
             window.innerWidth > 768 ? '70%' : '100%'
@@ -62,6 +67,7 @@ const App = () => {
             () => {
               setIsModalOpen(false);
               setEditData(emptyLab);
+              setIsEdit(false);
             }
           }
         >
@@ -71,6 +77,8 @@ const App = () => {
             labs={labs}
             setIsTestMethodModalOpen={setIsTestMethodModalOpen}
             setCurrentTestMethod={setCurrentTestMethod}
+            isEdit={isEdit}
+            setIsEdit={setIsEdit}
           />
         </Modal>
         <Modal
@@ -78,7 +86,7 @@ const App = () => {
           onCancel={() => {
             setIsTestMethodModalOpen(false);
           }}
-          title={currentTestMethod ? 'Edit Test Method' : 'Add Test Method'}
+          title={isEdit ? 'Edit Test Method' : 'Add Test Method'}
           footer={null}
           className='w-full md:w-1/2'
         >
@@ -86,6 +94,7 @@ const App = () => {
             editData={editData || emptyLab}
             setIsTestMethodModalOpen={setIsTestMethodModalOpen}
             currentTestMethod={currentTestMethod || emptyTestMethod}
+            isEdit={isEdit}
           />
         </Modal >
       </div >

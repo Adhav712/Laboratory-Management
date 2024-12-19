@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { useDispatch } from 'react-redux';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import { initialFormHeaders } from '../../store/initialData';
-import { updateLab, addLab, deleteTestMethod } from '../../store/labSlice';
+import { updateLab, addLab, deleteTestMethod, emptyLab } from '../../store/labSlice';
 import { Lab, TestMethod } from '../../types/Lab';
 import ReusableForm from '../FormComponent';
 import TableComponent from '../TableComponent';
@@ -17,6 +17,8 @@ interface MainCardProps {
     labs: Lab[];
     setIsTestMethodModalOpen: (state: boolean) => void;
     setCurrentTestMethod: (state: TestMethod) => void;
+    isEdit: boolean;
+    setIsEdit: (state: boolean) => void;
 }
 
 const MainCard: React.FC<MainCardProps> = ({
@@ -24,7 +26,8 @@ const MainCard: React.FC<MainCardProps> = ({
     setIsModalOpen,
     labs,
     setIsTestMethodModalOpen,
-    setCurrentTestMethod
+    setCurrentTestMethod,
+    isEdit
 }) => {
     const dispatch = useDispatch();
     const MainFormSchemaObject = Object.fromEntries(
@@ -44,7 +47,7 @@ const MainCard: React.FC<MainCardProps> = ({
     const handleSubmit = useCallback((data: Lab) => {
         console.log(data);
 
-        if (editData) {
+        if (isEdit && (editData?.id !== 0)) {
             dispatch(updateLab(data));
         } else {
             dispatch(addLab({ ...data, id: labs.length + 1, testMethods: [] }));
@@ -54,15 +57,18 @@ const MainCard: React.FC<MainCardProps> = ({
         console.log(data);
 
     },
-        [dispatch, editData, labs.length, setIsModalOpen]
+        [dispatch, editData?.id, isEdit, labs.length, setIsModalOpen]
     );
 
 
     useEffect(() => {
-        if (editData) {
-            MainFormMethods.reset(editData);
+        if ((editData?.id !== 0) && isEdit
+        ) {
+            MainFormMethods.reset(editData as FieldValues);
+        } else {
+            MainFormMethods.reset(emptyLab);
         }
-    }, [editData, MainFormMethods]);
+    }, [editData, MainFormMethods, isEdit]);
 
     return (
         <>
@@ -89,8 +95,8 @@ const MainCard: React.FC<MainCardProps> = ({
                 />
 
             </Suspense>
-            <div className='flex justify-between'>
-                <p className='text-xl font-semibold'>Test Method</p>
+            <div className='flex justify-between items-center py-1'>
+                <p className='text-lg font-semibold'>Test Method</p>
                 <Button onClick={() => {
                     setIsTestMethodModalOpen(true);
                     setCurrentTestMethod({

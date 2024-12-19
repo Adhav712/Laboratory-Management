@@ -9,15 +9,19 @@ import { CustomCellEditorProps, CustomCellRendererProps } from 'ag-grid-react';
 interface MasterTableProps {
     rowData: Lab[];
     onRowClick: (data: Lab) => void;
+    setIsEdit: (state: boolean) => void;
 }
 
-const MasterTable: React.FC<MasterTableProps> = ({ rowData, onRowClick }) => {
+const MasterTable: React.FC<MasterTableProps> = ({ rowData, onRowClick, setIsEdit }) => {
     const dispatch = useDispatch();
     const columns: ColDef[] = [
         {
             headerName: 'ID', field: 'id', sortable: true,
             cellRenderer: (params: CustomCellRendererProps) => (
-                <span className='cursor-pointer text-blue-500' onClick={() => onRowClick(params.data)}>
+                <span className='cursor-pointer text-blue-500' onClick={() => {
+                    setIsEdit(true);
+                    onRowClick(params.data)
+                }}>
                     {params.value}
                 </span>
             ),
