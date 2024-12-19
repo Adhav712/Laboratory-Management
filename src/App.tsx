@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import GridComponent from './components/GridComponent';
 import { useSelector, useDispatch } from 'react-redux';
-import { addLab, deleteTestMethod, updateLab, updateTestMethod } from './store/labSlice';
+import { addLab, addTestMethod, deleteTestMethod, updateLab, updateTestMethod } from './store/labSlice';
 import { Button, Modal } from 'antd';
 import { Lab, TestMethod } from './types/Lab';
 import { RootState } from './store';
@@ -11,6 +11,8 @@ import ReusableForm, { CustomField } from './components/FormComponent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 import Navbar from './components/Navbar';
+import TableComponent from './components/TableComponent';
+import { CustomCellRendererProps } from 'ag-grid-react';
 
 const initialFormHeaders: CustomField[] = [
   {
@@ -193,10 +195,19 @@ const App = () => {
             initialTestMethods
           }
           onSubmit={(data) => {
+            console.log(data);
+
             if (currentTestMethod) {
               dispatch(updateTestMethod({
                 labId: editData?.id || 0,
                 method: currentTestMethod.method,
+                parameters: data.parameters,
+                sampleType: data.sampleType
+              }))
+            } else {
+              dispatch(addTestMethod({
+                labId: editData?.id || 0,
+                method: data.method,
                 parameters: data.parameters,
                 sampleType: data.sampleType
               }))
@@ -249,7 +260,7 @@ const App = () => {
         </div>
         <div>
           <div>
-            <div className="flex gap-4 overflow-x-auto">
+            {/* <div className="flex gap-4 overflow-x-auto">
               {editData?.testMethods.map((method, index) => (
                 <div
                   key={index}
@@ -292,7 +303,74 @@ const App = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
+            <TableComponent
+              data={
+                labs.find((lab) => lab.id === editData?.id)?.testMethods || []}
+              isLoading={false}
+              columns={[
+                {
+                  headerName: 'Method',
+                  field: 'method',
+                  sortable: true,
+                  filter: true,
+                  // width: 250,
+                  flex: 1,
+                },
+                {
+                  headerName: 'Parameters',
+                  field: 'parameters',
+                  sortable: true,
+                  filter: true,
+                  // width: 250,
+                  flex: 1,
+                },
+                {
+                  headerName: 'Sample Type',
+                  field: 'sampleType',
+                  sortable: true,
+                  filter: true,
+                  // width: 250,
+                  flex: 1,
+                },
+                {
+                  headerName: 'Action',
+                  field: 'Action',
+                  cellRenderer: (params: CustomCellRendererProps) => {
+                    return (
+                      <div className="flex gap-4">
+                        <button
+                          className="text-blue-600 hover:text-blue-800"
+                          onClick={() => {
+                            setIsTestMethodModalOpen(true);
+                            setCurrentTestMethod(params.data);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-600 hover:text-red-800"
+                          onClick={() => {
+                            if (window.confirm('Are you sure you want to delete this item?')) {
+                              dispatch(deleteTestMethod(
+                                {
+                                  labId: editData?.id || 0,
+                                  method: params.data.method
+                                }
+                              ));
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )
+                  },
+                  // width: 250,
+                  flex: 1,
+                }
+              ]}
+            />
           </div>
         </div>
       </>
@@ -338,17 +416,12 @@ const App = () => {
           onCancel={() => {
             setIsTestMethodModalOpen(false);
           }}
+          title={currentTestMethod ? 'Edit Test Method' : 'Add Test Method'}
           footer={null}
           className='w-1/2'
         >
           <AddTestMehodModal />
         </Modal >
-        {/* <DynamicForm
-        initialValues={emptyLab}
-        onSubmit={handleSubmit}
-        fields={formFields}
-      /> */}
-
       </div >
     </>
 
