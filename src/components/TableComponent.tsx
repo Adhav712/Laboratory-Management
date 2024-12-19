@@ -19,7 +19,7 @@ const TableComponent = <T,>({ columns, data, isLoading, defaultColDef }: TableCo
     });
 
     return (
-        <div className="ag-theme-quartz mx-2" style={{ height: '58vh', width: 'auto' }}>
+        <div className="ag-theme-quartz mx-2" style={{ height: '60vh', width: 'auto' }}>
             <AgGridReact
                 ref={gridRef}
                 columnDefs={columns}

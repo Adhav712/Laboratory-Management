@@ -10,6 +10,7 @@ import { parameters } from './utils/faker';
 import ReusableForm, { CustomField } from './components/FormComponent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
+import Navbar from './components/Navbar';
 
 const initialFormHeaders: CustomField[] = [
   {
@@ -133,17 +134,16 @@ const App = () => {
     setIsModalOpen(true);
   };
 
-  const handleAdd = () => {
-    setEditData(null);
-    setIsModalOpen(true);
-  };
 
   const handleSubmit = useCallback((data: Lab) => { // Specify type for data
     if (editData) {
       dispatch(updateLab(data));
     } else {
       console.log(data);
-      dispatch(addLab({ ...data, id: labs.length + 1 }));
+      dispatch(addLab({
+        ...data, id: labs.length + 1,
+        testMethods: []
+      }));
     }
     setIsModalOpen(false);
   }, [dispatch, editData, labs]);
@@ -178,6 +178,7 @@ const App = () => {
 
   const MainFormMethods = useForm({
     resolver: zodResolver(schema),
+    defaultValues: editData ?? {}
   });
 
   const TestMethodFormMethods = useForm({
@@ -296,52 +297,60 @@ const App = () => {
         </div>
       </>
     )
-  }, [TestMethodFormMethods, dispatch, editData]);
+  }, [TestMethodFormMethods, dispatch, editData, handleSubmit]);
 
   return (
-    <div className="container mx-auto" >
-      <button className="btn btn-primary my-4" onClick={handleAdd}>
-        Add Form
-      </button>
-      <div>
+    <>
+      <Navbar />
+      <div className="container mx-auto" >
+        <Button
+          type="primary"
+          className='m-2'
+          onClick={() => {
+            setIsModalOpen(true);
+            setEditData(null);
+          }}>
+          Add Lab
+        </Button>
+        <div>
+          <GridComponent rowData={labs || []} onRowClick={handleRowClick} />
+        </div>
 
-        <GridComponent rowData={labs || []} onRowClick={handleRowClick} />
-      </div>
-
-      <Modal
-        open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false);
-          setEditData(null);
-        }}
-        title={editData ? 'Edit Lab' : 'Add Lab'}
-        footer={null}
-        width={
-          window.innerWidth > 768 ? '70%' : '100%'
-        }
-      >
-        <MainCard />
-      </Modal>
-      {/* 
+        <Modal
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setEditData(null);
+          }}
+          title={editData ? 'Edit Lab' : 'Add Lab'}
+          footer={null}
+          width={
+            window.innerWidth > 768 ? '70%' : '100%'
+          }
+        >
+          <MainCard />
+        </Modal>
+        {/* 
         Add Test Method Modal
       */}
-      <Modal
-        open={isTestMethodModalOpen}
-        onCancel={() => {
-          setIsTestMethodModalOpen(false);
-        }}
-        footer={null}
-        className='w-1/2'
-      >
-        <AddTestMehodModal />
-      </Modal >
-      {/* <DynamicForm
+        <Modal
+          open={isTestMethodModalOpen}
+          onCancel={() => {
+            setIsTestMethodModalOpen(false);
+          }}
+          footer={null}
+          className='w-1/2'
+        >
+          <AddTestMehodModal />
+        </Modal >
+        {/* <DynamicForm
         initialValues={emptyLab}
         onSubmit={handleSubmit}
         fields={formFields}
       /> */}
 
-    </div >
+      </div >
+    </>
 
   );
 };
