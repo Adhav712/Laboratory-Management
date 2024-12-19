@@ -5,7 +5,7 @@ import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 export interface FieldSchema<T> {
     name: string;
-    type: 'text' | 'select' | 'customRender';
+    type: 'text' | 'select' | 'textarea' | 'customRender';
     label?: string;
     options?: string[];
     isMultiSelect?: boolean;
@@ -65,7 +65,10 @@ const DynamicForm = <T,>({ initialValues = {} as (Lab | TestMethod), onSubmit, f
                             const RenderField = () => {
                                 switch (DynamicFields.type) {
                                     case 'text':
-                                        return <Input {...field} value={String(field.value || '')} placeholder={DynamicFields?.label} />;
+                                        return <Input
+                                            {...field}
+                                            placeholder={DynamicFields?.label}
+                                        />;
                                     case 'select':
                                         return (
                                             <Select
@@ -85,11 +88,13 @@ const DynamicForm = <T,>({ initialValues = {} as (Lab | TestMethod), onSubmit, f
                                                 }
                                             />
                                         );
+                                    case 'textarea':
+                                        return <textarea
+                                            {...field}
+                                            placeholder={DynamicFields?.label}
+                                        />;
                                     case 'customRender':
                                         return <>
-                                            {/* 
-                                                Give the Full Access to the Form Functionality
-                                            */}
                                             {DynamicFields.customRender?.(
                                                 initialValues as T,
                                                 field,
@@ -120,7 +125,7 @@ const DynamicForm = <T,>({ initialValues = {} as (Lab | TestMethod), onSubmit, f
 
                 </div>
             ))}
-            <div className="col-span-full flex justify-end">
+            <div className="col-span-full flex justify-end mt-4">
                 <Button htmlType="submit" type="primary" className="bg-blue-500 text-white py-2 px-4 rounded-md">
                     Submit
                 </Button>

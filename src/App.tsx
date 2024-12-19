@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import GridComponent from './components/GridComponent';
 import DynamicForm, { FieldSchema } from './components/DynamicForm';
 import { useSelector, useDispatch } from 'react-redux';
 import { addLab, deleteTestMethod, emptyLab, updateLab } from './store/labSlice';
-import { Button, Input, Modal, Select } from 'antd';
+import { Button, Modal } from 'antd';
 import { Lab, TestMethod } from './types/Lab';
 import { RootState } from './store';
 import { z } from 'zod';
+import { parameters } from './utils/faker';
 
 const initialFormHeaders: FieldSchema<Lab>[] = [
   {
@@ -55,8 +56,6 @@ const initialFormHeaders: FieldSchema<Lab>[] = [
       required: true,
       pattern: z.enum(['Active', 'Inactive'], { message: 'Select a valid status' }),
     }
-
-
   },
   {
     name: 'servicesOffered',
@@ -73,6 +72,15 @@ const initialFormHeaders: FieldSchema<Lab>[] = [
     validation: {
       required: true,
       pattern: z.array(z.string()).min(1, { message: 'Please select at least one service' }),
+    }
+  },
+  {
+    name: 'text',
+    label: 'text',
+    type: 'textarea',
+    validation: {
+      required: true,
+      pattern: z.string().min(3, { message: 'Text must be at least 3 characters' })
     }
   }
 ];
@@ -99,7 +107,7 @@ const App = () => {
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (data: Lab) => { // Specify type for data
+  const handleSubmit = useCallback((data: Lab) => { // Specify type for data
     if (editData) {
       dispatch(updateLab(data));
     } else {
@@ -108,35 +116,68 @@ const App = () => {
       dispatch(addLab({ ...data, id: labs.length + 1 }));
     }
     setIsModalOpen(false);
-  };
+  }, [dispatch, editData, labs]);
 
   const [formFields] = useState(initialFormHeaders);
 
 
 
 
-  return (
-    <div className="container mx-auto">
-      <button className="btn btn-primary my-4" onClick={handleAdd}>
-        Add Form
-      </button>
+  const AddTestMehodModal = useCallback(() => {
+    return (
       <div>
-
-        <GridComponent rowData={labs || []} onRowClick={handleRowClick} />
+        <DynamicForm
+          initialValues={
+            currentTestMethod || {
+              method: '',
+              parameters: [],
+              sampleType: ''
+            }
+          }
+          onSubmit={(data) => {
+            console.log(data);
+          }}
+          fields={[
+            {
+              name: 'method',
+              label: 'Method',
+              type: 'text',
+              validation: {
+                required: true,
+                pattern: z.string().min(3, { message: 'Method must be at least 3 characters' }),
+              }
+            },
+            {
+              name: 'parameters',
+              label: 'Parameters',
+              type: 'select',
+              options: parameters,
+              isMultiSelect: true,
+              validation: {
+                required: true,
+                pattern: z.array(z.string()).min(1, { message: 'Please select at least one parameter' }),
+              }
+            },
+            {
+              name: 'sampleType',
+              label: 'Sample Type',
+              type: 'select',
+              options: ['Oil', 'Water', 'Air', 'Metal'],
+              validation: {
+                required: true,
+                pattern: z.enum(['Oil', 'Water', 'Air', 'Metal'], { message: 'Select a valid sample type' }),
+              }
+            }
+          ]}
+        />
       </div>
+    )
+  }, [currentTestMethod]);
 
-      <Modal
-        open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false);
-          setEditData(null);
-        }}
-        title={editData ? 'Edit Lab' : 'Add Lab'}
-        footer={null}
-        width={
-          window.innerWidth > 768 ? '70%' : '100%'
-        }
-      >
+
+  const TestMehodCard = useCallback(() => {
+    return (
+      <>
         <DynamicForm
           initialValues={editData || emptyLab}
           onSubmit={handleSubmit}
@@ -198,6 +239,33 @@ const App = () => {
             </div>
           </div>
         </div>
+      </>
+    )
+  }, [dispatch, editData, formFields, handleSubmit]);
+
+  return (
+    <div className="container mx-auto">
+      <button className="btn btn-primary my-4" onClick={handleAdd}>
+        Add Form
+      </button>
+      <div>
+
+        <GridComponent rowData={labs || []} onRowClick={handleRowClick} />
+      </div>
+
+      <Modal
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditData(null);
+        }}
+        title={editData ? 'Edit Lab' : 'Add Lab'}
+        footer={null}
+        width={
+          window.innerWidth > 768 ? '70%' : '100%'
+        }
+      >
+        <TestMehodCard />
       </Modal>
       {/* 
         Add Test Method Modal
@@ -210,52 +278,7 @@ const App = () => {
         footer={null}
         className='w-1/2'
       >
-        <div>
-          <DynamicForm
-            initialValues={
-              currentTestMethod || {
-                method: '',
-                parameters: [],
-                sampleType: ''
-              }
-            }
-            onSubmit={(data) => {
-              console.log(data);
-            }}
-            fields={[
-              {
-                name: 'method',
-                label: 'Method',
-                type: 'text',
-                validation: {
-                  required: true,
-                  pattern: z.string().min(3, { message: 'Method must be at least 3 characters' }),
-                }
-              },
-              {
-                name: 'parameters',
-                label: 'Parameters',
-                type: 'select',
-                options: ['Viscosity', 'Temperature', 'Turbidity', 'pH'],
-                isMultiSelect: true,
-                validation: {
-                  required: true,
-                  pattern: z.array(z.string()).min(1, { message: 'Please select at least one parameter' }),
-                }
-              },
-              {
-                name: 'sampleType',
-                label: 'Sample Type',
-                type: 'select',
-                options: ['Oil', 'Water', 'Air', 'Metal'],
-                validation: {
-                  required: true,
-                  pattern: z.enum(['Oil', 'Water', 'Air', 'Metal'], { message: 'Select a valid sample type' }),
-                }
-              }
-            ]}
-          />
-        </div>
+        <AddTestMehodModal />
       </Modal>
 
 
