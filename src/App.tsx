@@ -9,7 +9,7 @@ import { emptyLab, emptyTestMethod } from './store/labSlice';
 
 // Lazy load components
 const Navbar = lazy(() => import('./components/Navbar'));
-const GridComponent = lazy(() => import('./components/GridComponent'));
+const MasterTable = lazy(() => import('./components/MasterTable'));
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,7 +43,7 @@ const App = () => {
         </Button>
         <div>
           <Suspense fallback={<div>Loading...</div>}>
-            <GridComponent rowData={labs || []} onRowClick={handleRowClick} />
+            <MasterTable rowData={labs || []} onRowClick={handleRowClick} />
           </Suspense>
         </div>
 

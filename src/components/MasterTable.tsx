@@ -6,12 +6,12 @@ import TableComponent from './TableComponent';
 import { ColDef } from 'ag-grid-community';
 import { CustomCellEditorProps, CustomCellRendererProps } from 'ag-grid-react';
 
-interface GridComponentProps {
+interface MasterTableProps {
     rowData: Lab[];
     onRowClick: (data: Lab) => void;
 }
 
-const GridComponent: React.FC<GridComponentProps> = ({ rowData, onRowClick }) => {
+const MasterTable: React.FC<MasterTableProps> = ({ rowData, onRowClick }) => {
     const dispatch = useDispatch();
     const columns: ColDef[] = [
         {
@@ -24,20 +24,22 @@ const GridComponent: React.FC<GridComponentProps> = ({ rowData, onRowClick }) =>
             width: 80
         },
         {
-            headerName: 'Lab Name', field: 'labName', sortable: true, filter: true,
+            headerName: 'Lab Name', field: 'labName', sortable: true, filter: true, width: 220
         },
         { headerName: 'Location', field: 'location', sortable: true, filter: true },
         {
             headerName: 'Contact Person',
             field: 'contactPerson',
             sortable: true,
-            filter: true
+            filter: true,
+            flex: 1
         },
         {
             headerName: 'Contact Number',
             field: 'contactNumber',
             sortable: true,
-            filter: true
+            filter: true,
+            flex: 1
         },
         {
             headerName: 'Services Offered',
@@ -112,4 +114,4 @@ const GridComponent: React.FC<GridComponentProps> = ({ rowData, onRowClick }) =>
     );
 };
 
-export default GridComponent;
+export default MasterTable;

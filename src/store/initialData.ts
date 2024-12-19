@@ -37,7 +37,7 @@ export const initialFormHeaders: CustomField[] = [
         type: 'input',
         validation: {
             required: true,
-            pattern: z.string().regex(/^\d{10}$/, { message: 'Enter a valid contact number' }),
+            pattern: z.string().regex(/^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/, { message: 'Enter a valid contact number' }),
         }
     },
     {
