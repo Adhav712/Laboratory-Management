@@ -33,23 +33,23 @@ const Navbar: React.FC = () => {
     );
 
     const renderDrawerMenu = () => (
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-6">
             {menuItems.map((menu, index) => (
                 <div key={index}>
-                    <p className="font-semibold">{menu.label}</p>
+                    <p className="font-semibold text-lg">{menu.label}</p>
                     {menu.items.map((item, subIndex) => (
-                        <p key={subIndex} className="pl-4">{item}</p>
+                        <p key={subIndex} className="pl-4 text-gray-700">{item}</p>
                     ))}
                 </div>
             ))}
-            <div className="flex flex-col space-y-2 mt-4">
-                <Button type="primary" className="bg-green-500 text-white border-none">
+            <div className="flex flex-col space-y-4 mt-6">
+                <Button type="primary" className="bg-green-500 text-white border-none rounded-md">
                     ESG
                 </Button>
-                <Button type="default" className="bg-blue-900 text-white">
+                <Button type="default" className="bg-blue-900 text-white rounded-md">
                     COMPLIANCE
                 </Button>
-                <Button type="default" className="bg-orange-500 text-white">
+                <Button type="default" className="bg-orange-500 text-white rounded-md">
                     CONTACT US
                 </Button>
             </div>
