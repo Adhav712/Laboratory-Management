@@ -20,6 +20,8 @@ interface MainCardProps {
     isEdit: boolean;
     setIsEdit: (state: boolean) => void;
     tempTestMethodData: TestMethod[];
+    setIsTestMethodNew: (state: boolean) => void;
+    setTempTestMethodData: (state: TestMethod[]) => void;
 }
 
 const MainCard: React.FC<MainCardProps> = ({
@@ -29,7 +31,9 @@ const MainCard: React.FC<MainCardProps> = ({
     setIsTestMethodModalOpen,
     setCurrentTestMethod,
     isEdit,
-    tempTestMethodData
+    tempTestMethodData,
+    setIsTestMethodNew,
+    setTempTestMethodData
 }) => {
     const dispatch = useDispatch();
     const MainFormSchemaObject = Object.fromEntries(
@@ -92,6 +96,7 @@ const MainCard: React.FC<MainCardProps> = ({
                                         parameters: [],
                                         sampleType: ''
                                     });
+                                    setIsTestMethodNew(true);
                                 }}>
                                     Add Test Method
                                 </Button>
@@ -173,12 +178,20 @@ const MainCard: React.FC<MainCardProps> = ({
                                                     className="text-red-600 hover:text-red-800"
                                                     onClick={() => {
                                                         if (window.confirm('Are you sure you want to delete this item?')) {
-                                                            dispatch(deleteTestMethod(
-                                                                {
-                                                                    labId: editData?.id || 0,
-                                                                    method: params.data.method
-                                                                }
-                                                            ));
+                                                            if (isEdit) {
+                                                                dispatch(deleteTestMethod(
+                                                                    {
+                                                                        labId: editData?.id || 0,
+                                                                        method: params.data.method
+                                                                    }
+                                                                ));
+                                                            } else {
+                                                                setTempTestMethodData(
+                                                                    tempTestMethodData.filter(
+                                                                        (method) => method.method !== params.data.method
+                                                                    )
+                                                                )
+                                                            }
                                                         }
                                                     }}
                                                 >

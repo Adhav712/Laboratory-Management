@@ -15,10 +15,12 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTestMethodModalOpen, setIsTestMethodModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isTestMethodNew, setIsTestMethodNew] = useState(false);
   const [editData, setEditData] = useState<Lab>(emptyLab); // Specify type for editData
   const [currentTestMethod, setCurrentTestMethod] = useState<TestMethod>(); // Specify type for currentTestMethod
   const [tempTestMethodData, setTempTestMethodData] = useState<TestMethod[]>([]); // Specify type for tempTestMethodData
   const labs = useSelector((state: RootState) => state.labs); // Specify type for state
+
 
   console.log("labs", labs);
   console.log("editData", editData);
@@ -87,6 +89,8 @@ const App = () => {
             isEdit={isEdit}
             setIsEdit={setIsEdit}
             tempTestMethodData={tempTestMethodData}
+            setTempTestMethodData={setTempTestMethodData}
+            setIsTestMethodNew={setIsTestMethodNew}
           />
         </Modal>
         <Modal
@@ -105,6 +109,8 @@ const App = () => {
             isEdit={isEdit}
             setTempTestMethodData={setTempTestMethodData}
             tempTestMethodData={tempTestMethodData}
+            isTestMethodNew={isTestMethodNew}
+
           />
         </Modal >
       </div >

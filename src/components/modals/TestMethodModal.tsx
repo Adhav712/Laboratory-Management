@@ -17,6 +17,7 @@ interface TestMethodModalProps {
     isEdit: boolean;
     setTempTestMethodData: (state: TestMethod[]) => void;
     tempTestMethodData: TestMethod[];
+    isTestMethodNew: boolean;
 }
 
 const TestMethodModal: React.FC<TestMethodModalProps> = ({
@@ -25,7 +26,8 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
     currentTestMethod,
     isEdit,
     setTempTestMethodData,
-    tempTestMethodData
+    tempTestMethodData,
+    isTestMethodNew
 }) => {
     const dispatch = useDispatch();
     const TestMethodSchemaObject = Object.fromEntries(
