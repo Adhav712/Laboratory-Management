@@ -273,6 +273,13 @@ const App = () => {
                 data={
                   labs.find((lab) => lab.id === editData?.id)?.testMethods || []}
                 isLoading={false}
+                paginationPageSize={5}
+                paginationPageSizeSelector={
+                  // Increment by 5 after 20 then 50, 100, 200, 500, 1000
+                  Array.from({ length: 6 }, (_, index) => index * 5 + 5)
+
+                }
+                height='35vh'
                 columns={[
                   {
                     headerName: 'Method',
