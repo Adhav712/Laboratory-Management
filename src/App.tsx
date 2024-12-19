@@ -6,6 +6,7 @@ import { RootState } from './store';
 import MainCard from './components/modals/MainCard';
 import TestMethodModal from './components/modals/TestMethodModal';
 import { emptyLab, emptyTestMethod } from './store/labSlice';
+import { Toaster } from 'react-hot-toast';
 
 // Lazy load components
 const Navbar = lazy(() => import('./components/Navbar'));
@@ -37,6 +38,7 @@ const App = () => {
 
   return (
     <>
+      <Toaster />
       <Suspense fallback={<div>Loading...</div>}>
         <Navbar />
       </Suspense>

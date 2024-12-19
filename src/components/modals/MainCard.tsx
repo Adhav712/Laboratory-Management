@@ -10,6 +10,7 @@ import TableComponent from '../TableComponent';
 import { CustomCellRendererProps } from 'ag-grid-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import toast from 'react-hot-toast';
 
 interface MainCardProps {
     editData: Lab | null;
@@ -55,8 +56,10 @@ const MainCard: React.FC<MainCardProps> = ({
 
         if (isEdit && (editData?.id !== 0)) {
             dispatch(updateLab(data));
+            toast.success('Lab Updated Successfully');
         } else {
             dispatch(addLab({ ...data, id: labs.length + 1, testMethods: tempTestMethodData }));
+            toast.success('Lab Added Successfully');
         }
         setIsModalOpen(false);
 
@@ -193,7 +196,7 @@ const MainCard: React.FC<MainCardProps> = ({
                                                                 dispatch(deleteTestMethod(
                                                                     {
                                                                         labId: editData?.id || 0,
-                                                                        method: params.data.method
+                                                                        id: params.data.id
                                                                     }
                                                                 ));
                                                             } else {

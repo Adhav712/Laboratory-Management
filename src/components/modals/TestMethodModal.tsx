@@ -8,6 +8,7 @@ import { Lab, TestMethod } from '../../types/Lab';
 import ReusableForm from '../FormComponent';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import toast from 'react-hot-toast';
 
 
 interface TestMethodModalProps {
@@ -56,6 +57,7 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
                     labId: editData?.id
                 });
                 dispatch(updateTestMethod(data));
+                toast.success('Test Method Updated Successfully');
             } else {
                 console.log("New TestMethod", {
                     ...data,
@@ -64,8 +66,9 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
 
                 dispatch(addTestMethod({
                     ...data, labId: editData?.id,
-                    id: tempTestMethodData.length + 1
+                    id: ((editData?.testMethods.length ?? 0) + 1)
                 }));
+                toast.success('Test Method Added Successfully');
             }
         } else {
             console.log("Is Edit false",);
@@ -77,6 +80,7 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
                 setTempTestMethodData(
                     [...tempTestMethodData, { ...data, id: tempTestMethodData.length + 1 }]
                 );
+                toast.success('Test Method Added Successfully');
             } else {
                 console.log("Not New Test Method", data);
                 setTempTestMethodData(
@@ -87,10 +91,11 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
                         return item;
                     })
                 );
+                toast.success('Test Method Updated Successfully');
             }
         }
         setIsTestMethodModalOpen(false);
-    }, [isEdit, setIsTestMethodModalOpen, isTestMethodNew, editData?.id, dispatch, tempTestMethodData, setTempTestMethodData, currentTestMethod?.id]);
+    }, [isEdit, setIsTestMethodModalOpen, isTestMethodNew, editData?.id, editData?.testMethods.length, dispatch, tempTestMethodData, setTempTestMethodData, currentTestMethod?.id]);
 
     useEffect(() => {
 
