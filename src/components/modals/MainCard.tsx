@@ -2,7 +2,7 @@ import React, { Suspense, useCallback } from 'react';
 import { Button } from 'antd';
 import { useDispatch } from 'react-redux';
 import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
-import { initialFormHeaders, initialTestMethods } from '../../store/initialData';
+import { initialFormHeaders } from '../../store/initialData';
 import { updateLab, addLab, deleteTestMethod } from '../../store/labSlice';
 import { Lab, TestMethod } from '../../types/Lab';
 import ReusableForm from '../FormComponent';
@@ -28,7 +28,7 @@ const MainCard: React.FC<MainCardProps> = ({
 }) => {
     const dispatch = useDispatch();
     const MainFormSchemaObject = Object.fromEntries(
-        initialTestMethods
+        initialFormHeaders
             .filter((field) => field?.name) // Ensure fields with a valid name
             .map((field) => [
                 field?.name, // Use field name as key
@@ -42,19 +42,21 @@ const MainCard: React.FC<MainCardProps> = ({
         resolver: zodResolver(schema),
         defaultValues: editData ?? {}
     });
-    const handleSubmit = useCallback(
-        (data: Lab) => {
-            if (editData) {
-                dispatch(updateLab(data));
-            } else {
-                dispatch(addLab({ ...data, id: labs.length + 1, testMethods: [] }));
-            }
-            setIsModalOpen(false);
-        },
+    const handleSubmit = useCallback((data: Lab) => {
+        console.log(data);
+
+        if (editData) {
+            dispatch(updateLab(data));
+        } else {
+            dispatch(addLab({ ...data, id: labs.length + 1, testMethods: [] }));
+        }
+        setIsModalOpen(false);
+
+        console.log(data);
+
+    },
         [dispatch, editData, labs.length, setIsModalOpen]
-
     );
-
 
 
     return (
@@ -80,6 +82,7 @@ const MainCard: React.FC<MainCardProps> = ({
                     )}
                     gridLayout='3x3'
                 />
+
             </Suspense>
             <div className='flex justify-between'>
                 <p className='text-xl font-semibold'>Test Method</p>

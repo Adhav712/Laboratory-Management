@@ -57,6 +57,12 @@ const App = () => {
           width={
             window.innerWidth > 768 ? '70%' : '100%'
           }
+          onClose={
+            () => {
+              setIsModalOpen(false);
+              setEditData(null);
+            }
+          }
         >
           <MainCard
             editData={editData}

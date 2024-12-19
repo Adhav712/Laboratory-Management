@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { initialFormHeaders, initialTestMethods } from '../../store/initialData';
+import { initialTestMethods } from '../../store/initialData';
 import { addTestMethod, updateTestMethod } from '../../store/labSlice';
 import { Lab, TestMethod } from '../../types/Lab';
 import ReusableForm from '../FormComponent';
@@ -21,7 +21,7 @@ const TestMethodModal: React.FC<TestMethodModalProps> = ({
 }) => {
     const dispatch = useDispatch();
     const TestMethodSchemaObject = Object.fromEntries(
-        initialFormHeaders
+        initialTestMethods
             .filter((field) => field?.name) // Ensure fields with a valid name
             .map((field) => [
                 field?.name, // Use field name as key

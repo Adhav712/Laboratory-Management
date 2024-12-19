@@ -21,7 +21,7 @@ export const emptyLab: Lab = {
 
 const labSlice = createSlice({
     name: 'labs',
-    initialState: generateFakeLabs(20),
+    initialState: generateFakeLabs(5),
     reducers: {
         addLab: (state, action) => {
             state.push(action.payload);
