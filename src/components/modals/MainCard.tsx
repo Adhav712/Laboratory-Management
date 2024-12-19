@@ -133,7 +133,7 @@ const MainCard: React.FC<MainCardProps> = ({
                                     field: 'method',
                                     sortable: true,
                                     filter: true,
-                                    flex: 1,
+                                    flex: 1
                                 },
                                 {
                                     headerName: 'Parameters',
@@ -141,6 +141,8 @@ const MainCard: React.FC<MainCardProps> = ({
                                     sortable: true,
                                     filter: true,
                                     flex: 1,
+                                    // editable: true,
+                                    // cellEditor: 'agMultiSelectCellEditor',
                                 },
                                 {
                                     headerName: 'Sample Type',

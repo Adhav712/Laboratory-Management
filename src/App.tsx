@@ -46,6 +46,7 @@ const App = () => {
             setIsModalOpen(true);
             setEditData(emptyLab);
             setIsEdit(false);
+            setTempTestMethodData([]);
           }}>
           Add Lab
         </Button>
