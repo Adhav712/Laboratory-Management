@@ -84,31 +84,34 @@ const MainCard: React.FC<MainCardProps> = ({
                     formMethods={MainFormMethods as unknown as UseFormReturn<FieldValues>}
                     buttonComponent={(handleSubmit) => (
                         <>
-                            <div className="w-full flex justify-end mb-2">
+                            <div className="w-full flex justify-end mb-1 pr-3 gap-2">
+                                <Button onClick={() => {
+                                    setIsTestMethodModalOpen(true);
+                                    setCurrentTestMethod({
+                                        method: '',
+                                        parameters: [],
+                                        sampleType: ''
+                                    });
+                                }}>
+                                    Add Test Method
+                                </Button>
                                 <Button
                                     className=''
                                     onClick={handleSubmit}>
                                     {isEdit ? 'Update' : 'Submit'}
                                 </Button>
+
                             </div>
+
                         </>
                     )}
                     gridLayout='3x3'
                 />
 
             </Suspense>
-            <div className='flex justify-between items-center py-1'>
+            <div className='flex justify-between items-center py-1 px-2'>
                 <p className='text-lg font-semibold'>Test Method</p>
-                <Button onClick={() => {
-                    setIsTestMethodModalOpen(true);
-                    setCurrentTestMethod({
-                        method: '',
-                        parameters: [],
-                        sampleType: ''
-                    });
-                }}>
-                    Add Test Method
-                </Button>
+
             </div>
             <div>
                 <div>
