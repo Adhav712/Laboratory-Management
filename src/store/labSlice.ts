@@ -37,8 +37,14 @@ const labSlice = createSlice({
         deleteLab: (state, action: { payload: number }) => {
             return state.filter((lab) => lab.id !== action.payload);
         },
+        deleteTestMethod: (state, action: { payload: { labId: number, method: string } }) => {
+            const index = state.findIndex((lab) => lab.id === action.payload.labId);
+            if (index !== -1) {
+                state[index].testMethods = state[index].testMethods.filter((method) => method.method !== action.payload.method);
+            }
+        }
     },
 });
 
-export const { addLab, updateLab, deleteLab } = labSlice.actions;
+export const { addLab, updateLab, deleteLab, deleteTestMethod } = labSlice.actions;
 export default labSlice.reducer;

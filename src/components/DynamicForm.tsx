@@ -1,6 +1,6 @@
 import { useForm, Controller, ControllerRenderProps, ControllerFieldState, Control } from 'react-hook-form';
 import { Button, Input, Select } from 'antd';
-import { Lab } from '../types/Lab';
+import { Lab, TestMethod } from '../types/Lab';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 export interface FieldSchema<T> {
@@ -25,12 +25,12 @@ export interface FieldSchema<T> {
 }
 
 interface DynamicFormProps<T> {
-    initialValues?: Lab;
+    initialValues?: Lab | TestMethod;
     onSubmit: (data: Lab) => void;
     fields: FieldSchema<T>[];
 }
 
-const DynamicForm = <T,>({ initialValues = {} as Lab, onSubmit, fields }: DynamicFormProps<T>) => {
+const DynamicForm = <T,>({ initialValues = {} as (Lab | TestMethod), onSubmit, fields }: DynamicFormProps<T>) => {
 
 
     const SchemaObject = Object.fromEntries(
@@ -48,12 +48,13 @@ const DynamicForm = <T,>({ initialValues = {} as Lab, onSubmit, fields }: Dynami
 
 
     const { control, handleSubmit } = useForm({
-        defaultValues: initialValues,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        defaultValues: initialValues as any,
         resolver: zodResolver(schema),
     });
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className=" p-6">
+        <form onSubmit={handleSubmit(onSubmit)} >
             {fields.map((DynamicFields, index) => (
                 <div key={DynamicFields.name} className="flex flex-col">
                     <label className="mb-2 text-sm font-medium text-gray-700">{DynamicFields.label}</label>
