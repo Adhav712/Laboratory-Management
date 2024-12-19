@@ -14,6 +14,7 @@ import { PlusOutlined } from '@ant-design/icons';
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTestMethodModalOpen, setIsTestMethodModalOpen] = useState(false);
   const inputRef = useRef<InputRef>(null);
   const [editData, setEditData] = useState<Lab | null>(null); // Specify type for editData
   const dispatch = useDispatch();
@@ -110,114 +111,92 @@ const App = () => {
         pattern: z.array(z.string()).min(1, { message: 'Please select at least one service' }),
       }
     },
-    {
-      name: 'testMethods',
-      label: 'Test Methods',
-      type: 'customRender',
-      customRender: (data, field, fieldState, control, index) => {
-        return (
-          <div key={field.name} className="grid grid-cols-3 gap-4">
-            <div>
-              <label>Method</label>
-              <Controller
-                name={`testMethods[${index}].method`}
-                control={control}
-                render={({ field }) => (
-                  <Input {...field} placeholder="Enter Method" />
-                )}
-              />
-            </div>
-            <div>
-              <label>Parameters</label>
-              <Controller
-                name={`testMethods[${index}].parameters`}
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    mode="multiple"
-                    value={field.value || []}
-                    onChange={(value) => field.onChange(value)}
-                    options={['Viscosity', 'Temperature', 'Turbidity', 'pH'].map((parameter) => ({
-                      label: parameter,
-                      value: parameter,
-                    }))}
-                    className="w-full"
-                    allowClear
-                    dropdownRender={(menu) => (
-                      <>
-                        {menu}
-                        <Divider style={{ margin: '8px 0' }} />
-                        <Space style={{ padding: '0 8px 4px' }}>
-                          <Input
-                            placeholder="Add custom parameter"
-                            ref={inputRef}
-                            onKeyDown={(e) => e.stopPropagation()}
-                          />
-                          <Button
-                            type="text"
-                            icon={<PlusOutlined />}
-                            onClick={() => {
-                              const customValue = inputRef.current?.value;
-                              if (customValue) {
-                                field.onChange([...field.value, customValue]);
-                              }
-                            }}
-                          >
-                            Add
-                          </Button>
-                        </Space>
-                      </>
-                    )}
-                  />
-                )}
-              />
-            </div>
-            <div>
-              <label>Sample Type</label>
-              <Controller
-                name={`testMethods[${index}].sampleType`}
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onChange={(value) => field.onChange(value)}
-                    options={['Oil', 'Water', 'Air', 'Metal'].map((type) => ({
-                      label: type,
-                      value: type,
-                    }))}
-                    className="w-full"
-                  />
-                )}
-              />
-            </div>
-            {/* <Button
-              type="text"
-              className="text-red-500"
-              title='Add Test Method'
-              onClick={() => {
-                control.fieldsRef.current[`testMethods`].append({
-                  method: '',
-                  parameters: [],
-                  sampleType: '',
-                });
-              }}
-            >
-              <PlusOutlined />
-            </Button>
-            <Button
-              type="text"
-              className="text-red-500"
-              title='Remove Test Method'
-              onClick={() => {
-                control.fieldsRef.current[`testMethods`].remove(index);
-              }}
-            >
-              <PlusOutlined />
-            </Button> */}
-          </div>
-        );
-      },
-    },
+    // {
+    //   name: 'testMethods',
+    //   label: 'Test Methods',
+    //   type: 'customRender',
+    //   customRender: (data, field, fieldState, control, index) => {
+    //     const sampleTypeValue = data.testMethods[index]?.sampleType; // Get sampleType value dynamically
+    //     return (
+    //       <div key={field.name} className="grid grid-cols-3 gap-4">
+    //         <div>
+    //           <label>Method</label>
+    //           <Controller
+    //             name={`testMethods[${index}].method`}
+    //             control={control}
+    //             render={({ field }) => <Input {...field} placeholder="Enter Method" />}
+    //           />
+    //         </div>
+    //         <div>
+    //           <label>Sample Type</label>
+    //           <Controller
+    //             name={`testMethods[${index}].sampleType`}
+    //             control={control}
+    //             render={({ field }) => (
+    //               <Select
+    //                 value={field.value}
+    //                 onChange={(value) => field.onChange(value)}
+    //                 options={['Oil', 'Water', 'Air', 'Metal'].map((type) => ({
+    //                   label: type,
+    //                   value: type,
+    //                 }))}
+    //                 className="w-full"
+    //               />
+    //             )}
+    //           />
+    //         </div>
+    //         {['Oil', 'Water'].includes(sampleTypeValue) && ( // Conditional rendering based on sampleType
+    //           <div>
+    //             <label>Parameters</label>
+    //             <Controller
+    //               name={`testMethods[${index}].parameters`}
+    //               control={control}
+    //               render={({ field }) => (
+    //                 <Select
+    //                   mode="multiple"
+    //                   value={field.value || []}
+    //                   onChange={(value) => field.onChange(value)}
+    //                   options={['Viscosity', 'Temperature', 'Turbidity', 'pH'].map((parameter) => ({
+    //                     label: parameter,
+    //                     value: parameter,
+    //                   }))}
+    //                   className="w-full"
+    //                   allowClear
+    //                   dropdownRender={(menu) => (
+    //                     <>
+    //                       {menu}
+    //                       <Divider style={{ margin: '8px 0' }} />
+    //                       <Space style={{ padding: '0 8px 4px' }}>
+    //                         <Input
+    //                           placeholder="Add custom parameter"
+    //                           ref={inputRef}
+    //                           onKeyDown={(e) => e.stopPropagation()}
+    //                         />
+    //                         <Button
+    //                           type="text"
+    //                           icon={<PlusOutlined />}
+    //                           onClick={() => {
+    //                             const customValue = inputRef.current?.value;
+    //                             if (customValue) {
+    //                               field.onChange([...field.value, customValue]);
+    //                             }
+    //                           }}
+    //                         >
+    //                           Add
+    //                         </Button>
+    //                       </Space>
+    //                     </>
+    //                   )}
+    //                 />
+    //               )}
+    //             />
+    //           </div>
+    //         )}
+    //       </div>
+    //     );
+    //   },
+
+    // },
   ];
   const [formFields] = useState(initialFormHeaders);
 
@@ -250,14 +229,15 @@ const App = () => {
           onSubmit={handleSubmit}
           fields={formFields}
         />
-        {/* <p className='text-xl font-semibold'>Test Method</p>
-        <div>
+        <div className='flex justify-between px-5'>
+          <p className='text-xl font-semibold'>Test Method</p>
           <Button onClick={() => {
-
-
+            setIsTestMethodModalOpen(true);
           }}>
             Add Test Method
           </Button>
+        </div>
+        <div>
           <div className=''>
             {editData?.testMethods.map((method, index) => (
               <div key={index}
@@ -305,8 +285,60 @@ const App = () => {
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
       </Modal>
+      {/* 
+        Add Test Method Modal
+      */}
+      <Modal
+        open={isTestMethodModalOpen}
+        onCancel={() => {
+          setIsTestMethodModalOpen(false);
+        }}
+        footer={null}
+        className='w-1/2'
+      >
+        <DynamicForm
+          initialValues={emptyLab}
+          onSubmit={(data) => {
+            console.log(data);
+          }}
+          fields={[
+            {
+              name: 'method',
+              label: 'Method',
+              type: 'text',
+              validation: {
+                required: true,
+                pattern: z.string().min(3, { message: 'Method must be at least 3 characters' }),
+              }
+            },
+            {
+              name: 'parameters',
+              label: 'Parameters',
+              type: 'select',
+              options: ['Viscosity', 'Temperature', 'Turbidity', 'pH'],
+              isMultiSelect: true,
+              validation: {
+                required: true,
+                pattern: z.array(z.string()).min(1, { message: 'Please select at least one parameter' }),
+              }
+            },
+            {
+              name: 'sampleType',
+              label: 'Sample Type',
+              type: 'select',
+              options: ['Oil', 'Water', 'Air', 'Metal'],
+              validation: {
+                required: true,
+                pattern: z.enum(['Oil', 'Water', 'Air', 'Metal'], { message: 'Select a valid sample type' }),
+              }
+            }
+          ]}
+        />
+      </Modal>
+
+
     </div>
   );
 };
