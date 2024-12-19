@@ -1,19 +1,21 @@
 import { useCallback, useState } from 'react';
 import GridComponent from './components/GridComponent';
-import DynamicForm, { FieldSchema } from './components/DynamicForm';
 import { useSelector, useDispatch } from 'react-redux';
-import { addLab, deleteTestMethod, emptyLab, updateLab } from './store/labSlice';
+import { addLab, deleteTestMethod, updateLab, updateTestMethod } from './store/labSlice';
 import { Button, Modal } from 'antd';
 import { Lab, TestMethod } from './types/Lab';
 import { RootState } from './store';
 import { z } from 'zod';
 import { parameters } from './utils/faker';
+import ReusableForm, { CustomField } from './components/FormComponent';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FieldValues, useForm, UseFormReturn } from 'react-hook-form';
 
-const initialFormHeaders: FieldSchema<Lab>[] = [
+const initialFormHeaders: CustomField[] = [
   {
     name: 'labName',
     label: 'Lab Name',
-    type: 'text',
+    type: 'input',
     validation: {
       required: true,
       pattern: z.string().min(3, { message: 'Lab Name must be at least 3 characters' }),
@@ -23,7 +25,7 @@ const initialFormHeaders: FieldSchema<Lab>[] = [
   {
     name: 'location',
     label: 'Location',
-    type: 'text',
+    type: 'input',
     validation: {
       required: true,
       pattern: z.string().min(3, { message: 'Location must be at least 3 characters' }),
@@ -32,7 +34,7 @@ const initialFormHeaders: FieldSchema<Lab>[] = [
   {
     name: 'contactPerson',
     label: 'Contact Person',
-    type: 'text',
+    type: 'input',
     validation: {
       required: true,
       pattern: z.string().min(3, { message: 'Contact Person must be at least 3 characters' }),
@@ -41,7 +43,7 @@ const initialFormHeaders: FieldSchema<Lab>[] = [
   {
     name: 'contactNumber',
     label: 'Contact Number',
-    type: 'text',
+    type: 'input',
     validation: {
       required: true,
       pattern: z.string().regex(/^\d{10}$/, { message: 'Enter a valid contact number' }),
@@ -68,22 +70,51 @@ const initialFormHeaders: FieldSchema<Lab>[] = [
       'Material Testing',
       'Environmental Testing',
     ],
-    isMultiSelect: true,
+    isInputProps: {
+      multiple: true
+    },
     validation: {
       required: true,
       pattern: z.array(z.string()).min(1, { message: 'Please select at least one service' }),
     }
-  },
-  {
-    name: 'text',
-    label: 'text',
-    type: 'textarea',
-    validation: {
-      required: true,
-      pattern: z.string().min(3, { message: 'Text must be at least 3 characters' })
-    }
   }
 ];
+
+
+const initialTestMethods: CustomField[] = [
+  {
+    name: 'method',
+    label: 'Method',
+    type: 'input',
+    validation: {
+      required: true,
+      pattern: z.string().min(3, { message: 'Method must be at least 3 characters' }),
+    }
+  },
+  {
+    name: 'parameters',
+    label: 'Parameters',
+    type: 'select',
+    options: parameters,
+    isInputProps: {
+      multiple: true
+    },
+    validation: {
+      required: true,
+      pattern: z.array(z.string()).min(1, { message: 'Please select at least one parameter' }),
+    }
+  },
+  {
+    name: 'sampleType',
+    label: 'Sample Type',
+    type: 'select',
+    options: ['Oil', 'Water', 'Air', 'Metal'],
+    validation: {
+      required: true,
+      pattern: z.enum(['Oil', 'Water', 'Air', 'Metal'], { message: 'Select a valid sample type' }),
+    }
+  }
+]
 
 
 const App = () => {
@@ -112,81 +143,105 @@ const App = () => {
       dispatch(updateLab(data));
     } else {
       console.log(data);
-
       dispatch(addLab({ ...data, id: labs.length + 1 }));
     }
     setIsModalOpen(false);
   }, [dispatch, editData, labs]);
 
-  const [formFields] = useState(initialFormHeaders);
 
 
 
+
+  const MainFormSchemaObject = Object.fromEntries(
+    initialTestMethods
+      .filter((field) => field?.name) // Ensure fields with a valid name
+      .map((field) => [
+        field?.name, // Use field name as key
+        field?.validation?.pattern ||
+        (field?.validation?.required ? z.string().min(1) : z.nullable(z.any()))
+      ])
+  );
+
+
+  const TestMethodSchemaObject = Object.fromEntries(
+    initialFormHeaders
+      .filter((field) => field?.name) // Ensure fields with a valid name
+      .map((field) => [
+        field?.name, // Use field name as key
+        field?.validation?.pattern ||
+        (field?.validation?.required ? z.string().min(1) : z.nullable(z.any()))
+      ])
+  );
+
+  const schema = z.object(MainFormSchemaObject).required();
+  const schema2 = z.object(TestMethodSchemaObject).required();
+
+  const MainFormMethods = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const TestMethodFormMethods = useForm({
+    resolver: zodResolver(schema2),
+  });
 
   const AddTestMehodModal = useCallback(() => {
     return (
       <div>
-        <DynamicForm
-          initialValues={
-            currentTestMethod || {
-              method: '',
-              parameters: [],
-              sampleType: ''
-            }
+        <ReusableForm
+          fields={
+            initialTestMethods
           }
           onSubmit={(data) => {
-            console.log(data);
-          }}
-          fields={[
-            {
-              name: 'method',
-              label: 'Method',
-              type: 'text',
-              validation: {
-                required: true,
-                pattern: z.string().min(3, { message: 'Method must be at least 3 characters' }),
-              }
-            },
-            {
-              name: 'parameters',
-              label: 'Parameters',
-              type: 'select',
-              options: parameters,
-              isMultiSelect: true,
-              validation: {
-                required: true,
-                pattern: z.array(z.string()).min(1, { message: 'Please select at least one parameter' }),
-              }
-            },
-            {
-              name: 'sampleType',
-              label: 'Sample Type',
-              type: 'select',
-              options: ['Oil', 'Water', 'Air', 'Metal'],
-              validation: {
-                required: true,
-                pattern: z.enum(['Oil', 'Water', 'Air', 'Metal'], { message: 'Select a valid sample type' }),
-              }
+            if (currentTestMethod) {
+              dispatch(updateTestMethod({
+                labId: editData?.id || 0,
+                method: currentTestMethod.method,
+                parameters: data.parameters,
+                sampleType: data.sampleType
+              }))
             }
-          ]}
+
+          }}
+          formMethods={MainFormMethods as unknown as UseFormReturn<FieldValues>}
+          buttonComponent={(handleSubmit) => (
+            <Button htmlType="submit" onClick={handleSubmit}>Submit</Button>
+          )
+          }
+          gridLayout='1x1'
         />
-      </div>
+      </div >
     )
-  }, [currentTestMethod]);
+  }, [MainFormMethods, currentTestMethod, dispatch, editData?.id]);
 
 
-  const TestMehodCard = useCallback(() => {
+  const MainCard = useCallback(() => {
     return (
       <>
-        <DynamicForm
-          initialValues={editData || emptyLab}
-          onSubmit={handleSubmit}
-          fields={formFields}
+        <ReusableForm
+          fields={initialFormHeaders}
+          onSubmit={(data) => {
+            console.log(data);
+            handleSubmit(data as Lab);
+          }}
+          formMethods={TestMethodFormMethods as unknown as UseFormReturn<FieldValues>}
+          buttonComponent={(handleSubmit) => (
+            <>
+              <div className="w-full flex justify-end mb-2">
+                <Button
+                  className=''
+                  onClick={handleSubmit}>
+                  {editData ? 'Update' : 'Submit'}
+                </Button>
+              </div>
+            </>
+          )}
+          gridLayout='3x3'
         />
         <div className='flex justify-between'>
           <p className='text-xl font-semibold'>Test Method</p>
           <Button onClick={() => {
             setIsTestMethodModalOpen(true);
+            setCurrentTestMethod(null);
           }}>
             Add Test Method
           </Button>
@@ -241,10 +296,10 @@ const App = () => {
         </div>
       </>
     )
-  }, [dispatch, editData, formFields, handleSubmit]);
+  }, [TestMethodFormMethods, dispatch, editData]);
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto" >
       <button className="btn btn-primary my-4" onClick={handleAdd}>
         Add Form
       </button>
@@ -265,7 +320,7 @@ const App = () => {
           window.innerWidth > 768 ? '70%' : '100%'
         }
       >
-        <TestMehodCard />
+        <MainCard />
       </Modal>
       {/* 
         Add Test Method Modal
@@ -279,10 +334,15 @@ const App = () => {
         className='w-1/2'
       >
         <AddTestMehodModal />
-      </Modal>
+      </Modal >
+      {/* <DynamicForm
+        initialValues={emptyLab}
+        onSubmit={handleSubmit}
+        fields={formFields}
+      /> */}
 
+    </div >
 
-    </div>
   );
 };
 
