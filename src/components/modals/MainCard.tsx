@@ -128,6 +128,7 @@ const MainCard: React.FC<MainCardProps> = ({
                                     tempTestMethodData
                             }
                             isLoading={false}
+
                             paginationPageSize={5}
                             paginationPageSizeSelector={
                                 // Increment by 5 after 20 then 50, 100, 200, 500, 1000
@@ -136,6 +137,13 @@ const MainCard: React.FC<MainCardProps> = ({
                             }
                             height='35vh'
                             columns={[
+                                {
+                                    headerName: 'ID',
+                                    field: 'id',
+                                    sortable: true,
+                                    filter: true,
+                                    width: 50
+                                },
                                 {
                                     headerName: 'Method',
                                     field: 'method',
@@ -168,8 +176,11 @@ const MainCard: React.FC<MainCardProps> = ({
                                                 <button
                                                     className="text-blue-600 hover:text-blue-800"
                                                     onClick={() => {
+                                                        console.log(params.data);
+
                                                         setIsTestMethodModalOpen(true);
                                                         setCurrentTestMethod(params.data);
+                                                        setIsTestMethodNew(false);
                                                     }}
                                                 >
                                                     Edit

@@ -159,7 +159,7 @@ const ReusableForm: React.FC<ReusableFormProps> = ({
     return (
         <>
             <form
-                className={`bg-white grid gap-4  rounded-md m-4 ${gridLayout === "3x3" ? "lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1" :
+                className={`bg-white grid gap-4  rounded-md mb-4 ${gridLayout === "3x3" ? "lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1" :
                     gridLayout === "2x2" ? "lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1" :
                         gridLayout === "1x1" ? "lg:grid-cols-1 md:grid-cols-1 sm:grid-cols-1" : ""
                     }`}

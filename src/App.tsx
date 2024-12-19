@@ -22,11 +22,11 @@ const App = () => {
   const labs = useSelector((state: RootState) => state.labs); // Specify type for state
 
 
-  console.log("labs", labs);
-  console.log("editData", editData);
-  console.log("isEdit", isEdit);
-  console.log("currentTestMethod", currentTestMethod);
-  console.log("tempTestMethodData", tempTestMethodData);
+  // console.log("labs", labs);
+  // console.log("editData", editData);
+  // console.log("isEdit", isEdit);
+  // console.log("currentTestMethod", currentTestMethod);
+  // console.log("tempTestMethodData", tempTestMethodData);
 
 
 
