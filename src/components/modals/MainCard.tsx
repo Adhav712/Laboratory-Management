@@ -71,8 +71,7 @@ const MainCard: React.FC<MainCardProps> = ({
 
 
     useEffect(() => {
-        if ((editData?.id !== 0) && isEdit
-        ) {
+        if (isEdit) {
             MainFormMethods.reset(editData as FieldValues);
         } else {
             MainFormMethods.reset(emptyLab);
