@@ -1,15 +1,8 @@
 import React from "react";
-import {
-    UseFormReturn,
-    FieldValues,
-    SubmitHandler,
-    Controller,
-} from "react-hook-form";
+import { UseFormReturn, FieldValues, SubmitHandler, Controller } from "react-hook-form";
 import FormFieldRender from "./FormFieldRender";
 import { z } from "zod";
 import { Button, Input, Select } from "antd";
-// import { SquareCheck, XSquare } from "lucide-react";
-
 
 type FieldType =
     | "input"
@@ -33,7 +26,7 @@ export interface CustomField {
     type: FieldType;
     isInputProps?: {
         placeholder?: string;
-        defaultValue?: string | number | boolean | string | string[] | number | number[]
+        defaultValue?: string | number | boolean | string | string[] | number | number[];
         multiple?: boolean;
         loading?: boolean;
     };
@@ -49,8 +42,8 @@ export interface CustomField {
     ) => React.ReactNode;
     widthSpan?: number;
     dependencies?: {
-        field: string; value:
-        string | number | boolean | string | string[] | number | number[] | z.ZodTypeAny;
+        field: string;
+        value: string | number | boolean | string | string[] | number | number[] | z.ZodTypeAny;
     }[];
 }
 
@@ -60,18 +53,12 @@ interface ReusableFormProps {
     buttonComponent?: (handleSubmit: () => void) => React.ReactNode;
     additionalButton?: React.ReactNode;
     isUpdate?: boolean;
-    // customRender?: (
-    //     fields: CustomField[],
-    //     renderField: (field: CustomField) => React.ReactNode,
-    //     formMethods: UseFormReturn<FieldValues>
-    // ) => React.ReactNode;
     formMethods: UseFormReturn<FieldValues>;
     gridLayout?: '3x3' | '2x2' | '1x1';
     tableLayout?: 'inline' | 'block';
-
 }
 
-const ReusableForm = ({
+const ReusableForm: React.FC<ReusableFormProps> = ({
     fields,
     onSubmit,
     buttonComponent,
@@ -80,7 +67,7 @@ const ReusableForm = ({
     formMethods,
     tableLayout,
     gridLayout = '3x3'
-}: ReusableFormProps) => {
+}) => {
     const { handleSubmit, formState, control } = formMethods;
     const watchedValues: Record<string, string | number | boolean | string | string[] | number | number[] | z.ZodTypeAny> = formMethods.watch();
     const renderField = (field: CustomField): JSX.Element => {
@@ -212,4 +199,4 @@ const ReusableForm = ({
     );
 };
 
-export default ReusableForm;       
+export default ReusableForm;

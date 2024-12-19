@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { Lab, TestMethod } from '../types/Lab';
+
 export const parameters = ['Viscosity', 'Temperature', 'Turbidity', 'Hardness', 'Tensile Strength', 'Organic Pollutants'];
+
 const generateFakeTestMethod = (): TestMethod => ({
     method: faker.helpers.arrayElement(['ASTM D445', 'ISO 7027', 'ISO 9001', 'EPA 8270D']),
     parameters: faker.helpers.arrayElements(parameters, 2),
@@ -18,6 +20,4 @@ const generateFakeLab = (id: number): Lab => ({
     testMethods: Array.from({ length: 2 }, generateFakeTestMethod),
 });
 
-export const generateFakeLabs = (count: number): Lab[] => {
-    return Array.from({ length: count }, (_, index) => generateFakeLab(index + 1));
-};
+export const generateFakeLabs = (count: number): Lab[] => Array.from({ length: count }, (_, index) => generateFakeLab(index + 1));

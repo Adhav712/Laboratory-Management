@@ -260,50 +260,6 @@ const App = () => {
         </div>
         <div>
           <div>
-            {/* <div className="flex gap-4 overflow-x-auto">
-              {editData?.testMethods.map((method, index) => (
-                <div
-                  key={index}
-                  className="flex-none w-64 p-4 border rounded-lg shadow-md bg-white"
-                >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{method.method}</h3>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Parameters: </span>
-                    {method.parameters.join(', ')}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Sample Type: </span>
-                    {method.sampleType}
-                  </p>
-                  <div className="flex justify-end gap-3 mt-4">
-                    <button
-                      className="text-blue-600 hover:text-blue-800"
-                      onClick={() => {
-                        setIsTestMethodModalOpen(true);
-                        setCurrentTestMethod(method);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-800"
-                      onClick={() => {
-                        if (window.confirm('Are you sure you want to delete this item?')) {
-                          dispatch(deleteTestMethod(
-                            {
-                              labId: editData.id,
-                              method: method.method
-                            }
-                          ));
-                        }
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div> */}
             <TableComponent
               data={
                 labs.find((lab) => lab.id === editData?.id)?.testMethods || []}
@@ -314,7 +270,6 @@ const App = () => {
                   field: 'method',
                   sortable: true,
                   filter: true,
-                  // width: 250,
                   flex: 1,
                 },
                 {
@@ -322,7 +277,6 @@ const App = () => {
                   field: 'parameters',
                   sortable: true,
                   filter: true,
-                  // width: 250,
                   flex: 1,
                 },
                 {
@@ -330,7 +284,6 @@ const App = () => {
                   field: 'sampleType',
                   sortable: true,
                   filter: true,
-                  // width: 250,
                   flex: 1,
                 },
                 {
@@ -366,7 +319,6 @@ const App = () => {
                       </div>
                     )
                   },
-                  // width: 250,
                   flex: 1,
                 }
               ]}
@@ -375,12 +327,12 @@ const App = () => {
         </div>
       </>
     )
-  }, [TestMethodFormMethods, dispatch, editData, handleSubmit]);
+  }, [TestMethodFormMethods, dispatch, editData, handleSubmit, labs]);
 
   return (
     <>
       <Navbar />
-      <div className="container mx-auto" >
+      <div className="container mx-auto p-4">
         <Button
           type="primary"
           className='m-2'
@@ -408,9 +360,6 @@ const App = () => {
         >
           <MainCard />
         </Modal>
-        {/* 
-        Add Test Method Modal
-      */}
         <Modal
           open={isTestMethodModalOpen}
           onCancel={() => {
@@ -418,7 +367,7 @@ const App = () => {
           }}
           title={currentTestMethod ? 'Edit Test Method' : 'Add Test Method'}
           footer={null}
-          className='w-1/2'
+          className='w-full md:w-1/2'
         >
           <AddTestMehodModal />
         </Modal >

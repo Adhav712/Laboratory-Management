@@ -19,51 +19,41 @@ export const emptyLab: Lab = {
     ]
 };
 
-
-
 const labSlice = createSlice({
     name: 'labs',
     initialState: generateFakeLabs(20),
     reducers: {
-        addLab: (state, action: { payload: Lab }) => {
+        addLab: (state, action) => {
             state.push(action.payload);
         },
-        addTestMethod: (state, action: { payload: { labId: number, method: string, parameters: string[], sampleType: string } }) => {
-            const index = state.findIndex((lab) => lab.id === action.payload.labId);
-            if (index !== -1) {
-                state[index].testMethods.push({
-                    method: action.payload.method,
-                    parameters: action.payload.parameters,
-                    sampleType: action.payload.sampleType
-                });
+        addTestMethod: (state, action) => {
+            const lab = state.find((lab) => lab.id === action.payload.labId);
+            if (lab) {
+                lab.testMethods.push(action.payload);
             }
         },
-        updateLab: (state, action: { payload: Lab }) => {
+        updateLab: (state, action) => {
             const index = state.findIndex((lab) => lab.id === action.payload.id);
             if (index !== -1) {
                 state[index] = action.payload;
             }
         },
-        updateTestMethod: (state, action: { payload: { labId: number, method: string, parameters: string[], sampleType: string } }) => {
-            const index = state.findIndex((lab) => lab.id === action.payload.labId);
-            if (index !== -1) {
-                const methodIndex = state[index].testMethods.findIndex((method) => method.method === action.payload.method);
+        updateTestMethod: (state, action) => {
+            const lab = state.find((lab) => lab.id === action.payload.labId);
+            if (lab) {
+                const methodIndex = lab.testMethods.findIndex((method) => method.method === action.payload.method);
                 if (methodIndex !== -1) {
-                    state[index].testMethods[methodIndex] = {
-                        method: action.payload.method,
-                        parameters: action.payload.parameters,
-                        sampleType: action.payload.sampleType
-                    };
+                    lab.testMethods[methodIndex] = action.payload;
                 }
             }
         },
-        deleteLab: (state, action: { payload: number }) => {
+        deleteLab: (state, action) => {
             return state.filter((lab) => lab.id !== action.payload);
         },
-        deleteTestMethod: (state, action: { payload: { labId: number, method: string } }) => {
-            const index = state.findIndex((lab) => lab.id === action.payload.labId);
-            if (index !== -1) {
-                state[index].testMethods = state[index].testMethods.filter((method) => method.method !== action.payload.method);
+        deleteTestMethod: (state, action) => {
+            const lab = state.find((lab) => lab.id === action.payload.labId);
+            if (lab) {
+                lab.testMethods = lab.testMethods.filter((method) => method.method !== action.payload.method);
             }
         }
     },
