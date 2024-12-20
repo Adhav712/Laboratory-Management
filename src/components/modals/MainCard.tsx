@@ -54,8 +54,14 @@ const MainCard: React.FC<MainCardProps> = ({
     const handleSubmit = useCallback((data: Lab) => {
         console.log(data);
 
-        if (isEdit && (editData?.id !== 0)) {
-            dispatch(updateLab(data));
+        if (isEdit) {
+            console.log('Edit Data', editData);
+
+            dispatch(updateLab({
+                ...data,
+                id: editData?.id,
+                testMethods: labs.find((lab) => lab.id === editData?.id)?.testMethods || []
+            }));
             toast.success('Lab Updated Successfully');
         } else {
             dispatch(addLab({ ...data, id: labs.length + 1, testMethods: tempTestMethodData }));
@@ -66,7 +72,7 @@ const MainCard: React.FC<MainCardProps> = ({
         console.log(data);
 
     },
-        [dispatch, editData?.id, isEdit, labs.length, setIsModalOpen, tempTestMethodData]
+        [dispatch, editData, isEdit, labs, setIsModalOpen, tempTestMethodData]
     );
 
 
